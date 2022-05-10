@@ -3,13 +3,21 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 // listen for requests
 app.listen(3001);
 
+// connect to mongodb atlas
+const dbURI = 'mongodb+srv://amandacarv:carv-060920@todo-calendar.jxpnq.mongodb.net/todo-calendar?retryWrites=true&w=majority'
 
-// connect to mongodb
-// const mongoose = require('mongoose');
+mongoose.connect(dbURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+    .then(res => console.log('Connected to database'))
+    .catch(err => console.log(err))
+;
 
 // middleware
 app.use(express.urlencoded( {extended: true} ))
