@@ -1,9 +1,9 @@
 // express app
-const express = require('express');
+import express, { urlencoded } from 'express';
 const app = express();
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+import cors from 'cors';
+import { json } from 'body-parser';
+import { connect } from 'mongoose';
 
 // listen for requests
 app.listen(3001);
@@ -11,18 +11,18 @@ app.listen(3001);
 // connect to mongodb atlas
 const dbURI = 'mongodb+srv://amandacarv:carv-060920@todo-calendar.jxpnq.mongodb.net/todo-calendar?retryWrites=true&w=majority'
 
-mongoose.connect(dbURI, {
+connect(dbURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-    .then(res => console.log('Connected to database'))
+    .then(res => app.listen(3001))
     .catch(err => console.log(err))
 ;
 
 // middleware
-app.use(express.urlencoded( {extended: true} ))
+app.use(urlencoded( {extended: true} ))
 app.use(cors());
-app.use(bodyParser.json());
+app.use(json());
 
 // create todo
 let todoList = [];
