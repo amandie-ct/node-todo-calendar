@@ -2,8 +2,9 @@
 import express, { urlencoded } from 'express';
 const app = express();
 import cors from 'cors';
-import { json } from 'body-parser';
-import { connect } from 'mongoose';
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+import Todo from './models/Todo';
 
 // listen for requests
 app.listen(3001);
@@ -11,7 +12,7 @@ app.listen(3001);
 // connect to mongodb atlas
 const dbURI = 'mongodb+srv://amandacarv:carv-060920@todo-calendar.jxpnq.mongodb.net/todo-calendar?retryWrites=true&w=majority'
 
-connect(dbURI, {
+mongoose.connect(dbURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -20,19 +21,27 @@ connect(dbURI, {
 ;
 
 // middleware
-app.use(urlencoded( {extended: true} ))
+app.use(bodyParser.urlencoded( {extended: true} ))
 app.use(cors());
-app.use(json());
+app.use(bodyParser.json());
 
-// create todo
-let todoList = [];
-let doneList = [];
 
 app.post('/todos/new', (req, res) => {
-    console.log(req.body);
-    todoList.push(req.body);
+    const todo = new Todo({
+        title: req.body.title,
+        description: req.body.description,
+        time: req.body.time
+    })
 
-    res.json({
+    todo.save()
+        .then((result) => {
+            res.send(result)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+
+        res.json({
         success: true,
         doneList,
         todoList
