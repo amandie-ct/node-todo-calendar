@@ -1,13 +1,11 @@
 // express app
-import express, { urlencoded } from 'express';
-const app = express();
+import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import Todo from './models/Todo';
+import Model from './models/Todo';
 
-// listen for requests
-app.listen(3001);
+const app = express();
 
 // connect to mongodb atlas
 const dbURI = 'mongodb+srv://amandacarv:carv-060920@todo-calendar.jxpnq.mongodb.net/todo-calendar?retryWrites=true&w=majority'
@@ -27,12 +25,11 @@ app.use(bodyParser.json());
 
 
 app.post('/todos/new', (req, res) => {
-    const todo = new Todo({
+    const todo = new Model({
         title: req.body.title,
         description: req.body.description,
         time: req.body.time
     })
-
     todo.save()
         .then((result) => {
             res.send(result)
@@ -40,17 +37,14 @@ app.post('/todos/new', (req, res) => {
         .catch((err) => {
             console.log(err)
         })
-
         res.json({
         success: true,
-        doneList,
-        todoList
     })
 })
 
 // read todo
 app.get('/todos', (req, res) => {
-    res.json(todoList);
+    await Model.find()
 })
 
 // delete todo
