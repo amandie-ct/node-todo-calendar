@@ -1,11 +1,12 @@
 // express app
-import express from 'express';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
-import Model from './models/Todo';
+const express = require('express')
+const cors = require('cors')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+const Todo = require('./models/Todo')
+const User = require('./models/User')
 
-const app = express();
+const app = express()
 
 // connect to mongodb atlas
 const dbURI = 'mongodb+srv://amandacarv:carv-060920@todo-calendar.jxpnq.mongodb.net/todo-calendar?retryWrites=true&w=majority'
@@ -20,38 +21,41 @@ mongoose.connect(dbURI, {
 
 // middleware
 app.use(bodyParser.urlencoded( {extended: true} ))
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors())
+app.use(bodyParser.json())
 
 
 app.post('/todos/new', (req, res) => {
-    const todo = new Model({
+    const todo = new Todo({
         title: req.body.title,
         description: req.body.description,
         time: req.body.time
     })
     todo.save()
-        .then((result) => {
-            res.send(result)
+        .then((todo) => {
+            res.send(todo)
         })
         .catch((err) => {
             console.log(err)
         })
-        res.json({
-        success: true,
-    })
 })
 
 // read todo
 app.get('/todos', (req, res) => {
-    await Model.find()
+    Todo.find()
+        .then((todos) => {
+            res.send(todos)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
 })
 
 // delete todo
 app.delete('/todos/:id', (req, res) => {
-    const todoid = req.params.id;
+    Todo.findById()
     todoList.splice(todoid, 1);
-    res.json({todoList, doneList});
+    res.json();
 })
 
 // 'update' todo (set as done)
@@ -60,5 +64,5 @@ app.put('/todos/done/:id', (req, res) => {
     const todo = todoList[todoid];
     doneList.push(todo);
     todoList.splice(todoid, 1);
-    res.json({todoList, doneList});
+    res.json();
 })
